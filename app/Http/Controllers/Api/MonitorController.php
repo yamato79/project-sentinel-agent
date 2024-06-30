@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class MonitorController extends Controller
 {
@@ -23,6 +24,7 @@ class MonitorController extends Controller
     public function index(Request $request, string $monitorType = '')
     {
         if (! array_key_exists($monitorType, self::MONITOR_TYPES)) {
+            logger()->error("Invalid Monitor Type: {$monitorType}");
             return response()->json(['error' => 'Invalid monitor type'], 400);
         }
 
