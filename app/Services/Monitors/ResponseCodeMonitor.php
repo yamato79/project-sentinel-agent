@@ -13,7 +13,9 @@ class ResponseCodeMonitor implements MonitorInterface
     public function execute(ExecuteMonitorRequest $request): MonitorResponse
     {
         $payload = [
-            'data' => [],
+            'data' => [
+                'response_code' => null
+            ],
             'message' => '',
             'status' => 'success',
         ];
@@ -21,10 +23,8 @@ class ResponseCodeMonitor implements MonitorInterface
         try {
             $response = Http::timeout(10)->get($request->get('address'));
             $responseStatus = $response->status();
-
-            $payload['data'] = [
-                'response_code' => $response->status(),
-            ];
+            
+            $payload['data']['response_code'] = $response->status();
         } catch (\Exception $e) {
             $payload['message'] = $e->getMessage();
             $payload['status'] = 'error';

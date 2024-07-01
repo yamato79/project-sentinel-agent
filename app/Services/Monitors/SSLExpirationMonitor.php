@@ -13,7 +13,9 @@ class SSLExpirationMonitor implements MonitorInterface
     public function execute(ExecuteMonitorRequest $request): MonitorResponse
     {
         $payload = [
-            'data' => [],
+            'data' => [
+                'expires_in' => null,
+            ],
             'message' => '',
             'status' => 'success',
         ];
@@ -32,9 +34,7 @@ class SSLExpirationMonitor implements MonitorInterface
             $cert = stream_context_get_params($client)['options']['ssl']['peer_certificate'];
             $certInfo = openssl_x509_parse($cert);
 
-            $payload['data'] = [
-                'expires_in' => Carbon::createFromTimestamp($certInfo['validTo_time_t'])->diffInDays(),
-            ];
+            $payload['data']['expires_in'] = Carbon::createFromTimestamp($certInfo['validTo_time_t'])->diffInDays();
         } catch (\Exception $e) {
             $payload['message'] = $e->getMessage();
             $payload['status'] = 'error';

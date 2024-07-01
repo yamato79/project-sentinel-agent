@@ -13,7 +13,9 @@ class ResponseTimeMonitor implements MonitorInterface
     public function execute(ExecuteMonitorRequest $request): MonitorResponse
     {
         $payload = [
-            'data' => [],
+            'data' => [
+                'response_time' => null,
+            ],
             'message' => '',
             'status' => 'success',
         ];
@@ -23,9 +25,7 @@ class ResponseTimeMonitor implements MonitorInterface
             Http::timeout(15)->get($request->get('address'));
             $end = microtime(true);
 
-            $payload['data'] = [
-                'response_time' => (($end - $start) * 1000), // Response time in milliseconds.
-            ];
+            $payload['data']['response_time'] = (($end - $start) * 1000); // Response time in milliseconds.
         } catch (\Exception $e) {
             $payload['message'] = $e->getMessage();
             $payload['status'] = 'error';
