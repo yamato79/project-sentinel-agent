@@ -13,7 +13,9 @@ class DomainExpirationMonitor implements MonitorInterface
     public function execute(ExecuteMonitorRequest $request): MonitorResponse
     {
         $payload = [
-            'data' => [],
+            'data' => [
+                'expires_in' => null,
+            ],
             'message' => '',
             'status' => 'success',
         ];
@@ -24,10 +26,7 @@ class DomainExpirationMonitor implements MonitorInterface
 
             if (preg_match('/Registry Expiry Date: (.*)/', $whois, $matches)) {
                 $expirationDate = Carbon::parse(trim($matches[1]));
-
-                $payload['data'] = [
-                    'expires_in' => Carbon::now()->diffInDays($expirationDate, false),
-                ];
+                $payload['data']['expires_in'] = Carbon::now()->diffInDays($expirationDate, false);
             }
         } catch (\Exception $e) {
             $payload['message'] = $e->getMessage();
