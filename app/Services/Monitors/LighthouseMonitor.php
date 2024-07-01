@@ -22,49 +22,49 @@ class LighthouseMonitor implements MonitorInterface
         ];
 
         try {
-            logger()->info("Running Lighthouse");
+            logger()->info('Running Lighthouse');
             $result = Lighthouse::url($request->get('address'))
                 ->onlyAudits([
-                    "viewport",
-                    "first-contentful-paint",
-                    "largest-contentful-paint",
-                    "first-meaningful-paint",
-                    "speed-index",
-                    "final-screenshot",
-                    "total-blocking-time",
-                    "cumulative-layout-shift",
-                    "server-response-time",
-                    "interactive",
-                    "diagnostics",
-                    "network-requests",
-                    "main-thread-tasks",
-                    "metrics",
-                    "resource-summary",
-                    "third-party-summary",
-                    "third-party-facades",
-                    "largest-contentful-paint-element",
-                    "lcp-lazy-loaded",
-                    "layout-shifts",
-                    "long-tasks",
-                    "non-composited-animations",
-                    "prioritize-lcp-image",
-                    "script-treemap-data",
-                    "render-blocking-resources",
-                    "unminified-javascript",
-                    "unused-javascript",
-                    "efficient-animated-content",
-                    "duplicated-javascript",
-                    "legacy-javascript",
+                    'viewport',
+                    'first-contentful-paint',
+                    'largest-contentful-paint',
+                    'first-meaningful-paint',
+                    'speed-index',
+                    'final-screenshot',
+                    'total-blocking-time',
+                    'cumulative-layout-shift',
+                    'server-response-time',
+                    'interactive',
+                    'diagnostics',
+                    'network-requests',
+                    'main-thread-tasks',
+                    'metrics',
+                    'resource-summary',
+                    'third-party-summary',
+                    'third-party-facades',
+                    'largest-contentful-paint-element',
+                    'lcp-lazy-loaded',
+                    'layout-shifts',
+                    'long-tasks',
+                    'non-composited-animations',
+                    'prioritize-lcp-image',
+                    'script-treemap-data',
+                    'render-blocking-resources',
+                    'unminified-javascript',
+                    'unused-javascript',
+                    'efficient-animated-content',
+                    'duplicated-javascript',
+                    'legacy-javascript',
                 ])
                 ->timeoutInSeconds(120)
                 ->run();
-                
-            logger()->info("Finished Lighthouse");
+
+            logger()->info('Finished Lighthouse');
 
             $payload['data']['scores'] = $result->scores();
             $payload['data']['audits'] = $result->audits();
         } catch (\Exception $e) {
-            logger()->info("Lighthouse Issue", [
+            logger()->info('Lighthouse Issue', [
                 'raw' => $e->getMessage(),
             ]);
             $payload['message'] = $e->getMessage();
