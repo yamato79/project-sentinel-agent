@@ -13,6 +13,7 @@ class DomainNameserversMonitor implements MonitorInterface
     {
         $payload = [
             'data' => [
+                'domain' => null,
                 'nameservers' => [],
             ],
             'message' => '',
@@ -26,6 +27,7 @@ class DomainNameserversMonitor implements MonitorInterface
             exec("dig +short NS {$domain}", $nameservers);
 
             $payload['data']['nameservers'] = $nameservers;
+            $payload['data']['domain'] = $domain;
         } catch (\Exception $e) {
             $payload['message'] = $e->getMessage();
             $payload['status'] = 'error';
