@@ -24,8 +24,13 @@ class SSLExpirationMonitor implements MonitorInterface
             $parsedUrl = parse_url($request->get('address'));
             $hostname = $parsedUrl['host'];
 
-            $context = stream_context_create(['ssl' => ['capture_peer_cert' => true]]);
-            $client = @stream_socket_client('ssl://'.$hostname.':443', $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
+            $context = stream_context_create(['ssl' => [
+                'capture_peer_cert' => true,
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ]]);
+
+            $client = stream_socket_client('ssl://'.$hostname.':443', $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
 
             if (! $client) {
                 throw new \Exception("Unable to establish SSL connection: $errstr ($errno)");

@@ -24,7 +24,7 @@ class DomainExpirationMonitor implements MonitorInterface
         try {
             $domain = parse_url($request->get('address'), PHP_URL_HOST);
             $whois = shell_exec("whois $domain");
-            
+
             if (preg_match('/Registry Expiry Date: (.*)/', $whois, $matches)) {
                 $expirationDate = Carbon::parse(trim($matches[1]));
                 $payload['data']['expires_in'] = Carbon::now()->diffInDays($expirationDate, false);
