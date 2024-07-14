@@ -42,16 +42,19 @@ class SSLExpirationMonitor implements MonitorInterface
             // Calculate expiration in days
             $expirationTimestamp = $certInfo['validTo_time_t'];
             $currentTimestamp = Carbon::now()->timestamp;
+            $expirationDate = Carbon::createFromTimestamp($expirationTimestamp);
 
             if ($expirationTimestamp < $currentTimestamp) {
-                // Certificate has expired, return negative days since expiration
-                $daysSinceExpiration = Carbon::createFromTimestamp($expirationTimestamp)->diffInDays(Carbon::now(), false);
+                // Certificate has expired, return negative days since expiration∂
+                $daysSinceExpiration = $expirationDate->diffInDays(Carbon::now(), false);
                 $payload['data']['expires_in'] = -$daysSinceExpiration; // Negative value for days since expiration
             } else {
                 // Certificate is valid, return positive days until expiration
-                $daysUntilExpiration = Carbon::now()->diffInDays(Carbon::createFromTimestamp($expirationTimestamp), false);
+                $daysUntilExpiration = Carbon::now()->diffInDays($expirationDate, false);
                 $payload['data']['expires_in'] = $daysUntilExpiration; // Positive value for days until expiration
             }
+
+            $payload['data']['expires_in_date'] = $expirationDate->toDateTimeString();
         } catch (\Exception $e) {
             $payload['message'] = $e->getMessage();
             $payload['status'] = 'error';
