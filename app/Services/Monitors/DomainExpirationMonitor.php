@@ -22,15 +22,20 @@ class DomainExpirationMonitor implements MonitorInterface
         ];
 
         try {
-            $domain = parse_url($request->get('address'), PHP_URL_HOST);
+            $host = parse_url($request->get('address'), PHP_URL_HOST);
+            $hostParts = explode('.', $host);
+            $hostParts = array_reverse($hostParts);
+            $domain = "{$hostParts[1]}.{$hostParts[0]}";
+            
             $whois = shell_exec("whois $domain");
 
             if (preg_match('/Registry Expiry Date: (.*)/', $whois, $matches)) {
                 $expirationDate = Carbon::parse(trim($matches[1]));
                 $payload['data']['expires_in'] = Carbon::now()->diffInDays($expirationDate, false);
                 $payload['data']['expires_in_date'] = $expirationDate->toDateTimeString();
-                $payload['data']['domain'] = $domain;
             }
+
+            $payload['data']['domain'] = $domain;
         } catch (\Exception $e) {
             $payload['message'] = $e->getMessage();
             $payload['status'] = 'error';

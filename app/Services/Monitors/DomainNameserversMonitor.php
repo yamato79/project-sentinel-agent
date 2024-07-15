@@ -21,7 +21,11 @@ class DomainNameserversMonitor implements MonitorInterface
         ];
 
         try {
-            $domain = parse_url($request->get('address'), PHP_URL_HOST);
+            $host = parse_url($request->get('address'), PHP_URL_HOST);
+            $hostParts = explode('.', $host);
+            $hostParts = array_reverse($hostParts);
+            $domain = "{$hostParts[1]}.{$hostParts[0]}";
+
             $nameservers = [];
 
             exec("dig +short NS {$domain}", $nameservers);
